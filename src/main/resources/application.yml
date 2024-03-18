@@ -1,0 +1,33 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /app
+spring:
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+  datasource:
+    password: wpay-2022
+    url: jdbc:postgresql://localhost:5432/Prueba
+    username: wpay
+  jpa:
+    generate-ddl: false
+    hibernate.ddl-auto: create
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        hbm2ddl:
+          charset_name: UTF-8
+#          import_files: scripts/1_document_type.sql, scripts/user.sql, scripts/4_modules.sql, scripts/5_permissions.sql, scripts/6_roles.sql, scripts/7_email_template.sql, scripts/types.sql , scripts/test_data.sql
+settings:
+  url:
+    front: http://localhost:4200/
+  application:
+    name: SpringSecurity
+  social-networks:
+  auth:
+    token_time: 30
+  encryption:
+    aes:
