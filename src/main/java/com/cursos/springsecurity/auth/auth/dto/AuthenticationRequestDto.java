@@ -15,9 +15,6 @@ public class AuthenticationRequestDto {
     @JsonProperty(value = "user_name")
     private String userName;
 
-    /**
-     * Contraseña del cliente.
-     */
     @Size(max = 30)
     @NotNull
     @NotEmpty

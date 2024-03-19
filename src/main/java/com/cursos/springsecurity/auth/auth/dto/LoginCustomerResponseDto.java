@@ -14,7 +14,7 @@ public class LoginCustomerResponseDto {
 //    @JsonProperty(value = "mfa_is_email")
 //    private boolean mfaIsEmail;
 
-    @JsonProperty(value = "email")
+    @JsonProperty(value = "user_email")
     private String email;
 
     public LoginCustomerResponseDto(UUID userId, String email) {

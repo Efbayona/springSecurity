@@ -1,7 +1,9 @@
 package com.cursos.springsecurity.auth.auth.controller;
 
+import com.cursos.springsecurity.auth.auth.dto.AuthCustomerResponse;
 import com.cursos.springsecurity.auth.auth.dto.AuthenticationRequestDto;
 import com.cursos.springsecurity.auth.auth.dto.LoginCustomerResponseDto;
+import com.cursos.springsecurity.auth.auth.dto.MfaRequest;
 import com.cursos.springsecurity.auth.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,6 +28,13 @@ public class AuthController {
     public ResponseEntity<LoginCustomerResponseDto> login(@Valid @RequestBody AuthenticationRequestDto request){
         LoginCustomerResponseDto response = authService.loginCustomer(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Operation(description = "Mfa")
+    @ApiResponse(responseCode = "200", description = "sucess")
+    @PostMapping("/mfa")
+    public ResponseEntity<AuthCustomerResponse> mfa(@Valid @RequestBody MfaRequest request){
+        return  new ResponseEntity<>(authService.mfaAuthenticationUser(request) , HttpStatus.OK);
     }
 
 }
