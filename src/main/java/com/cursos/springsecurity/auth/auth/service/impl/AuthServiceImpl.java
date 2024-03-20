@@ -4,8 +4,10 @@ import com.cursos.springsecurity.auth.auth.dto.*;
 import com.cursos.springsecurity.auth.auth.exception.AuthenticationFailedException;
 import com.cursos.springsecurity.auth.auth.security.jwt.JwtTokenProvider;
 import com.cursos.springsecurity.auth.auth.service.AuthService;
+import com.cursos.springsecurity.auth.user.entity.RefreshToken;
 import com.cursos.springsecurity.auth.user.entity.User;
 import com.cursos.springsecurity.auth.user.repository.UserRepository;
+import com.cursos.springsecurity.auth.user.service.RefreshTokenService;
 import com.cursos.springsecurity.common.util.UtilString;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,12 +25,14 @@ public class AuthServiceImpl implements AuthService {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
-    public AuthServiceImpl(UserRepository userRepository, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public AuthServiceImpl(UserRepository userRepository, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -51,6 +55,7 @@ public class AuthServiceImpl implements AuthService {
 
         String accessToken = generateToken(user.getUserName());
         TokenResponse tokenResponse = TokenResponse.create(accessToken);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
         UserCustomerResponse userCustomerResponse = getUserCustomerResponse(user);
 
         userRepository.save(user);
