@@ -1,6 +1,6 @@
 package com.cursos.springsecurity.auth.auth.security.service;
 
-import com.cursos.springsecurity.auth.auth.dto.Permission;
+import com.cursos.springsecurity.auth.auth.dto.Permissions;
 import com.cursos.springsecurity.auth.auth.security.service.impl.UserDetailsImpl;
 import com.cursos.springsecurity.auth.user.entity.User;
 import com.cursos.springsecurity.auth.user.repository.UserRepository;
@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with userName: " + userName);
         }
-        List<Permission> permissions = userRepository.findPermissionsByUserName(userName);
+        List<Permissions> permissions = userRepository.findPermissionsByUserName(userName);
         return UserDetailsImpl.build(user, permissions);
     }
 }

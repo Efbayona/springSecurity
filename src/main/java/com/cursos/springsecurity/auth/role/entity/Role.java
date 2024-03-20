@@ -31,5 +31,5 @@ public class Role extends AuditEntity {
     private List<Permission> permissions;
 
     @ManyToMany(mappedBy = "roles")
-    private List<User> user;
+    private List<User> users;
 }

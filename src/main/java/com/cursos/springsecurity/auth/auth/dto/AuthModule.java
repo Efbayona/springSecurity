@@ -20,14 +20,15 @@ public class AuthModule {
     @JsonProperty(value = "module_route")
     private String route;
 
-//    @JsonProperty(value = "module_order")
-//    private Integer order;
+    @JsonProperty(value = "module_order")
+    private Integer order;
 
-    public AuthModule(UUID moduleId, String name, String description, String icon, String route) {
+    public AuthModule(UUID moduleId, String name, String description, String icon, String route, Integer order) {
         this.moduleId = moduleId;
         this.name = name;
         this.description = description;
         this.icon = icon;
         this.route = route;
+        this.order = order;
     }
 }

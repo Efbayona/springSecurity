@@ -1,6 +1,6 @@
 package com.cursos.springsecurity.auth.auth.security.service.impl;
 
-import com.cursos.springsecurity.auth.auth.dto.Permission;
+import com.cursos.springsecurity.auth.auth.dto.Permissions;
 import com.cursos.springsecurity.auth.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +24,7 @@ public class UserDetailsImpl implements UserDetails {
         this.password = password;
         this.authorities = authorities;
     }
-    public static UserDetailsImpl build(User user, List<Permission> permissions) {
+    public static UserDetailsImpl build(User user, List<Permissions> permissions) {
         List<GrantedAuthority> authorities = permissions.stream()
                 .map(permission -> new SimpleGrantedAuthority(permission.getName()))
                 .collect(Collectors.toList());

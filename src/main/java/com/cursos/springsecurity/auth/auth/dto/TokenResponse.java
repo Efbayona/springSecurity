@@ -20,7 +20,6 @@ public class TokenResponse {
         this.accessToken = accessToken;
 
     }
-
     public static TokenResponse create(String accessToken) {
         return new TokenResponse(accessToken);
     }

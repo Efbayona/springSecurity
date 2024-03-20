@@ -11,5 +11,4 @@ public interface UserRepository extends JpaRepository <User, UUID> , UserReposit
 
     User getUserByName(String name);
 
-    List<AuthModule> findModulesByUser(UUID userId);
 }

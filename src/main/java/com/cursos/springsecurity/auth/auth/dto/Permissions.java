@@ -2,12 +2,12 @@ package com.cursos.springsecurity.auth.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Permission {
+public class Permissions {
 
     @JsonProperty(value = "name")
     private String name;
 
-    public Permission(String name) {
+    public Permissions(String name) {
         this.name = name;
     }
 

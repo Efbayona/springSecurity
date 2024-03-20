@@ -1,7 +1,9 @@
 package com.cursos.springsecurity.auth.user.repository.impl;
 
 import com.cursos.springsecurity.auth.auth.dto.AuthModule;
-import com.cursos.springsecurity.auth.auth.dto.Permission;
+import com.cursos.springsecurity.auth.auth.dto.Permissions;
+import com.cursos.springsecurity.auth.module.entity.Module;
+import com.cursos.springsecurity.auth.permission.entity.Permission;
 import com.cursos.springsecurity.auth.role.entity.Role;
 import com.cursos.springsecurity.auth.user.entity.User;
 import com.cursos.springsecurity.auth.user.repository.UserRepositoryCustom;
@@ -24,8 +26,46 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     EntityManager em;
 
     @Override
-    public List<Permission> findPermissionsByUserName(String userName) {
-        return null;
+    public List<Permissions> findPermissionsByUserName(String userName) {
+
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        List<Permissions> permissions = new ArrayList<>();
+
+        try {
+            /*-- Criteria Query --*/
+            CriteriaQuery<Permissions> cq = cb.createQuery(Permissions.class);
+
+            /*-- Define FROM clause --*/
+            Root<User> root = cq.from(User.class);
+            Join<User , Role> userRoleJoin = root.join("roles", JoinType.INNER);
+            Join<Role , Permission> permissionJoin = userRoleJoin.join( "permissions" , JoinType.INNER);
+
+
+            cq.select(cb.construct(
+                    Permissions.class,
+                    permissionJoin.get("name")
+            ));
+
+            /*-- Define WHERE clause --*/
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("name") , userName));
+
+            cq.where(predicates.toArray(new Predicate[0]));
+
+            cq.groupBy(permissionJoin.get("name"));
+
+            /*-- Execute Query --*/
+            TypedQuery<Permissions> q = em.createQuery(cq);
+            permissions = q.getResultList();
+
+        } catch (Exception e){
+            log.error("Criteria Permissions Login [{}]" , e.getMessage());
+        }
+        em.close();
+        return permissions;
+
     }
 
     @Override
@@ -40,33 +80,33 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
             Root<User> root = cq.from(User.class);
             Join<User, Role> userRoleJoin = root.join("roles", JoinType.INNER);
             Join<Role, Permission> permissionJoin = userRoleJoin.join("permissions", JoinType.INNER);
-            Join<Permission, Module> moduleJoin = permissionJoin.join("module", JoinType.INNER);
+            Join<Permissions, Module> moduleJoin = permissionJoin.join("module", JoinType.INNER);
 
             /* --- Define DTO projection ---*/
             cq.select(cb.construct(
                     AuthModule.class,
-                    root.get("moduleId"),
-                    root.get("moduleName"),
-                    root.get("moduleDescription"),
-                    root.get("moduleIcon"),
-                    root.get("moduleRoute"),
-                    root.get("moduleOrder")
+                    moduleJoin.get("moduleId"),
+                    moduleJoin.get("name"),
+                    moduleJoin.get("description"),
+                    moduleJoin.get("icon"),
+                    moduleJoin.get("route"),
+                    moduleJoin.get("order")
             ));
 
             /* --- Define WHERE clause ---*/
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(cb.equal(root.get("userId"), userId));
 
-            cq.where(predicates.toArray(new Predicate[0])).orderBy(cb.asc(moduleJoin.get("moduleOrder")));
+            cq.where(predicates.toArray(new Predicate[0])).orderBy(cb.asc(moduleJoin.get("order")));
 
             /* Agrupar por atributos de la entidad Module*/
             cq.groupBy(
-                    root.get("moduleId"),
-                    root.get("moduleName"),
-                    root.get("moduleDescription"),
-                    root.get("moduleIcon"),
-                    root.get("moduleRoute"),
-                    root.get("moduleOrder")
+                    moduleJoin.get("moduleId"),
+                    moduleJoin.get("name"),
+                    moduleJoin.get("description"),
+                    moduleJoin.get("icon"),
+                    moduleJoin.get("route"),
+                    moduleJoin.get("order")
             );
 
             /* --- Execute query ---*/
