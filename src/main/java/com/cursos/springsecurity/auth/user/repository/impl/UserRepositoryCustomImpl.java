@@ -45,16 +45,16 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
             cq.select(cb.construct(
                     Permissions.class,
-                    permissionJoin.get("name")
+                    permissionJoin.get("permissionName")
             ));
 
             /*-- Define WHERE clause --*/
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(cb.equal(root.get("name") , userName));
+            predicates.add(cb.equal(root.get("userName") , userName));
 
             cq.where(predicates.toArray(new Predicate[0]));
 
-            cq.groupBy(permissionJoin.get("name"));
+            cq.groupBy(permissionJoin.get("permissionName"));
 
             /*-- Execute Query --*/
             TypedQuery<Permissions> q = em.createQuery(cq);
@@ -86,27 +86,27 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
             cq.select(cb.construct(
                     AuthModule.class,
                     moduleJoin.get("moduleId"),
-                    moduleJoin.get("name"),
-                    moduleJoin.get("description"),
-                    moduleJoin.get("icon"),
-                    moduleJoin.get("route"),
-                    moduleJoin.get("order")
+                    moduleJoin.get("moduleName"),
+                    moduleJoin.get("moduleDescription"),
+                    moduleJoin.get("moduleIcon"),
+                    moduleJoin.get("moduleRoute"),
+                    moduleJoin.get("moduleOrder")
             ));
 
             /* --- Define WHERE clause ---*/
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(cb.equal(root.get("userId"), userId));
 
-            cq.where(predicates.toArray(new Predicate[0])).orderBy(cb.asc(moduleJoin.get("order")));
+            cq.where(predicates.toArray(new Predicate[0])).orderBy(cb.asc(moduleJoin.get("moduleOrder")));
 
             /* Agrupar por atributos de la entidad Module*/
             cq.groupBy(
                     moduleJoin.get("moduleId"),
-                    moduleJoin.get("name"),
-                    moduleJoin.get("description"),
-                    moduleJoin.get("icon"),
-                    moduleJoin.get("route"),
-                    moduleJoin.get("order")
+                    moduleJoin.get("moduleName"),
+                    moduleJoin.get("moduleDescription"),
+                    moduleJoin.get("moduleIcon"),
+                    moduleJoin.get("moduleRoute"),
+                    moduleJoin.get("moduleOrder")
             );
 
             /* --- Execute query ---*/

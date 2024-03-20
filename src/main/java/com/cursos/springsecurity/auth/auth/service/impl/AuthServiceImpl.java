@@ -34,13 +34,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginCustomerResponseDto loginCustomer(AuthenticationRequestDto request) {
 
-        User user = userRepository.getUserByName(request.getUserName().toLowerCase(Locale.ROOT));
+        User user = userRepository.getUserByUserName(request.getUserName().toLowerCase(Locale.ROOT));
 
-        if (!passwordEncoder.matches(request.getUserPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getUserPassword(), user.getUserPassword())) {
             throw new AuthenticationFailedException("Las contraseñas no coinciden");
         }
 
-        return LoginCustomerResponseDto.create(user.getUserId(),  UtilString.emailConvertMask(user.getEmail()));
+        return LoginCustomerResponseDto.create(user.getUserId(),  UtilString.emailConvertMask(user.getUserEmail()));
     }
 
 
@@ -49,20 +49,20 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new AuthenticationFailedException("Tenemos problemas, reintenta mas tarde..."));
 
-        String accessToken = generateToken(user.getName());
+        String accessToken = generateToken(user.getUserName());
         TokenResponse tokenResponse = TokenResponse.create(accessToken);
         UserCustomerResponse userCustomerResponse = getUserCustomerResponse(user);
 
         userRepository.save(user);
 
-        return AuthCustomerResponse.create(tokenResponse, userCustomerResponse, userRepository.findModulesByUser(user.getUserId()), userRepository.findPermissionsByUserName(user.getName()));
+        return AuthCustomerResponse.create(tokenResponse, userCustomerResponse, userRepository.findModulesByUser(user.getUserId()), userRepository.findPermissionsByUserName(user.getUserName()));
     }
 
     private static UserCustomerResponse getUserCustomerResponse(User user) {
         return UserCustomerResponse.create(
                 user.getUserId(),
-                user.getName(),
-                String.valueOf(user.getStatus())
+                user.getUserName(),
+                String.valueOf(user.getUserStatus())
         );
     }
 
@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
     public User getUserAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
-            return userRepository.getUserByName(userDetails.getUsername());
+            return userRepository.getUserByUserName(userDetails.getUsername());
         }
         return null;
     }

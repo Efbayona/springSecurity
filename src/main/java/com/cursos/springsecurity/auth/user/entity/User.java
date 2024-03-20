@@ -21,18 +21,18 @@ public class User extends AuditEntity {
     @Column(name = "user_id")
     private UUID userId;
 
-    @Column(name = "name", nullable = false, length = 38, unique = true)
-    private String name;
+    @Column(name = "user_name", nullable = false, length = 38, unique = true)
+    private String userName;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Column(name = "user_password", nullable = false)
+    private String userPassword;
 
-    @Column(name = "email", nullable = false, length = 200, unique = true)
-    private String email;
+    @Column(name = "user_email", nullable = false, length = 200, unique = true)
+    private String userEmail;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private UserStatus status;
+    @Column(name = "user_status")
+    private UserStatus userStatus;
 
     @Column(name = "administrator")
     private boolean administrator;
@@ -81,10 +81,10 @@ public class User extends AuditEntity {
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"}, name = "uc_user_role"))
     private List<Role> roles;
 
-    public User(String name, String password, boolean administrator) {
-        this.name = name;
-        this.status = UserStatus.ACTIVE;
-        this.password = password;
+    public User(String userName, String userPassword, boolean administrator) {
+        this.userName = userName;
+        this.userStatus = UserStatus.ACTIVE;
+        this.userPassword = userPassword;
 //        this.loginAttempts = 0;
 //        this.loginAttemptsMfa = 0;
 //        this.mfaIsEmail = true;

@@ -18,20 +18,20 @@ public class Module extends AuditEntity {
     @Column(name = "module_id")
     private UUID moduleId;
 
-    @Column(name = "name", unique = true, length = 50, nullable = false)
-    private String name;
+    @Column(name = "module_name", unique = true, length = 50, nullable = false)
+    private String moduleName;
 
-    @Column(name = "description", unique = true, length = 200, nullable = false)
-    private String description;
+    @Column(name = "module_description", unique = true, length = 200, nullable = false)
+    private String moduleDescription;
 
-    @Column(name = "icon", length = 50, nullable = false)
-    private String icon;
+    @Column(name = "module_icon", length = 50, nullable = false)
+    private String moduleIcon;
 
-    @Column(name = "route", unique = true, length = 50, nullable = false)
-    private String route;
+    @Column(name = "module_route", unique = true, length = 50, nullable = false)
+    private String moduleRoute;
 
     @Column(name = "module_order", nullable = false)
-    private Integer order;
+    private Integer moduleOrder;
 
     @OneToMany(mappedBy = "module")
     private List<Permission> permissions;
@@ -39,12 +39,12 @@ public class Module extends AuditEntity {
     public Module() {
     }
 
-    public Module(UUID moduleId, String name, String description, String icon, String route, Integer order) {
+    public Module(UUID moduleId, String moduleName, String moduleDescription, String moduleIcon, String moduleRoute, Integer moduleOrder) {
         this.moduleId = moduleId;
-        this.name = name;
-        this.description = description;
-        this.icon = icon;
-        this.route = route;
-        this.order = order;
+        this.moduleName = moduleName;
+        this.moduleDescription = moduleDescription;
+        this.moduleIcon = moduleIcon;
+        this.moduleRoute = moduleRoute;
+        this.moduleOrder = moduleOrder;
     }
 }

@@ -21,11 +21,11 @@ public class Permission extends AuditEntity {
     @Column(name = "permission_id" )
     private UUID permissionId;
 
-    @Column(name = "name", length = 100 , nullable = false)
-    private String name;
+    @Column(name = "permission_name", length = 100 , nullable = false)
+    private String permissionName;
 
-    @Column(name = "title", length = 100 , nullable = false)
-    private String title;
+    @Column(name = "permission_title", length = 100 , nullable = false)
+    private String permissionTitle;
 
     @ManyToMany(mappedBy = "permissions")
     @Fetch(FetchMode.SUBSELECT)
@@ -40,9 +40,9 @@ public class Permission extends AuditEntity {
 
     public Permission() {
     }
-    public Permission(String name, String title, Module module) {
-        this.name = name;
-        this.title = title;
+    public Permission(String permissionName, String permissionTitle, Module module) {
+        this.permissionName = permissionName;
+        this.permissionTitle = permissionTitle;
         this.module = module;
     }
 }

@@ -19,7 +19,7 @@ public class Role extends AuditEntity {
     @Column(name = "role_id")
     private UUID roleId;
 
-    @Column(name = "rolename", length = 100, nullable = false)
+    @Column(name = "role_name", length = 100, nullable = false)
     private String roleName;
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
