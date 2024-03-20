@@ -54,8 +54,8 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new AuthenticationFailedException("Tenemos problemas, reintenta mas tarde..."));
 
         String accessToken = generateToken(user.getUserName());
-        TokenResponse tokenResponse = TokenResponse.create(accessToken);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+        TokenResponse tokenResponse = TokenResponse.create(accessToken , refreshToken.getToken());
         UserCustomerResponse userCustomerResponse = getUserCustomerResponse(user);
 
         userRepository.save(user);

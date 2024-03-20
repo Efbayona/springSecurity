@@ -16,11 +16,12 @@ public class TokenResponse {
     @JsonProperty(value = "refresh_token")
     private String refreshToken;
 
-    public TokenResponse(String accessToken) {
+    public TokenResponse(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
-
+        this.refreshToken = refreshToken;
     }
-    public static TokenResponse create(String accessToken) {
-        return new TokenResponse(accessToken);
+
+    public static TokenResponse create(String accessToken, String refreshToken) {
+        return new TokenResponse(accessToken, refreshToken);
     }
 }
