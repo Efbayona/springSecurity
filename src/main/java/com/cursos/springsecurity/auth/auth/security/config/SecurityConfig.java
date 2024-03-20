@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests( authConfig -> {
                     authConfig.requestMatchers(HttpMethod.POST, "auth/login").permitAll();
                     authConfig.requestMatchers(HttpMethod.POST, "auth/mfa").permitAll();
+                    authConfig.requestMatchers(HttpMethod.POST, "auth/refresh_token").permitAll();
                     authConfig.requestMatchers(HttpMethod.GET, "auth/public-access").permitAll();
                     authConfig.requestMatchers("/error").permitAll();
 //                    authConfig.requestMatchers(HttpMethod.GET, "/products").hasAuthority(Permission.READ_ALL_PRODUCTS.name());
