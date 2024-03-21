@@ -1,12 +1,12 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy JAR app to Azure Web App - spring-security
+name: Build and deploy JAR app to Azure Web App - backendufpso
 
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
@@ -21,14 +21,18 @@ jobs:
         with:
           java-version: '17'
 
-      - name: Build with Maven
-        run: mvn clean install
+      - name: Grant execute permission to Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: '${{ github.workspace }}/build/libs/*.jar'
 
   deploy:
     runs-on: ubuntu-latest
@@ -48,15 +52,14 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_632622A0AC324FE5AFF450CD88EDC283 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D30AD8ADB22B41B8A4C2D979D48435D0 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0684AFFD92A54B059F708FF2CCC78ACD }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6471B565F24C478798E850C06BB92432 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_8924AEEDC3404F50A08C4578922A4C11 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_467BA78AC91D492E960316087CE4DA4D }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'spring-security'
+          app-name: 'backendufpso'
           slot-name: 'Production'
-          package: '*.jar'
-          
+          package: 'ufpso-0.0.1-SNAPSHOT.jar'  
