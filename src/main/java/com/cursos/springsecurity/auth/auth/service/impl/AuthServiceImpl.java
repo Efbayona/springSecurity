@@ -9,6 +9,11 @@ import com.cursos.springsecurity.auth.user.entity.User;
 import com.cursos.springsecurity.auth.user.repository.UserRepository;
 import com.cursos.springsecurity.auth.user.service.RefreshTokenService;
 import com.cursos.springsecurity.common.util.UtilString;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Locale;
 
 @Service
@@ -26,6 +32,9 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+
+    @Value("${security.oauth2.client.registration.google.client_id}")
+    private String googleClientId;
 
     public AuthServiceImpl(UserRepository userRepository, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
@@ -45,6 +54,20 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return LoginCustomerResponseDto.create(user.getUserId(),  UtilString.emailConvertMask(user.getUserEmail()));
+    }
+
+    @Override
+    public AuthLoginSocialResponse loginSocial(AuthLoginSocialRequest request) {
+
+        GoogleIdTokenVerifier googleIdTokenVerifier = new GoogleIdTokenVerifier.Builder(
+                new NetHttpTransport(), new GsonFactory())
+                .setAudience(Collections.singletonList(googleClientId))
+                .build();
+
+        GoogleIdToken googleIdToken = googleIdTokenVerifier.verify();
+
+        GoogleIdToken.Payload payload = googleIdToken.getPayload();
+
     }
 
 
