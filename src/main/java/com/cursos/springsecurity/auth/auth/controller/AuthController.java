@@ -8,10 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth/")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -23,7 +25,7 @@ public class AuthController {
         this.refreshTokenService = refreshTokenService;
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     @Operation(description = "Login the user")
     @ApiResponse(responseCode = "200", description = "sucess")
     public ResponseEntity<LoginCustomerResponseDto> login(@Valid @RequestBody AuthenticationRequestDto request){
@@ -31,7 +33,7 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("mfa")
+    @PostMapping("/mfa")
     @Operation(description = "Mfa")
     @ApiResponse(responseCode = "200", description = "sucess")
     public ResponseEntity<AuthCustomerResponse> mfa(@Valid @RequestBody MfaRequest request){
@@ -43,6 +45,14 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "sucess")
     public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest request){
         return new ResponseEntity<>(refreshTokenService.refreshToken(request), HttpStatus.OK);
+    }
+
+    @GetMapping("/")
+    @Operation(description = "login social")
+    @ApiResponse(responseCode = "200", description = "sucess")
+    public ResponseEntity<Object> loginSocial(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.ok(authentication.getPrincipal());
     }
 
 }
