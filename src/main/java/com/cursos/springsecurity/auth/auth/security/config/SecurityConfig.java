@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +26,22 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
+
+    private final String[] ROUTES_ALLOWED_WITHOUT_AUTHENTICATION = {
+    };
+
+    private final String[] ROUTES_GET_ALLOWED_WITHOUT_AUTHENTICATION = {
+            "/auth/public-access",
+            "/auth/login/social/",
+            "/auth/"
+    };
+
+    private final String[] ROUTES_POST_ALLOWED_WITHOUT_AUTHENTICATION = {
+            "/auth/mfa",
+            "/auth/login",
+            "/auth/refresh_token"
+    };
+
     public SecurityConfig(CustomUserDetailsService customUserDetailsService, JwtRequestFilter jwtRequestFilter) {
         this.customUserDetailsService = customUserDetailsService;
         this.jwtRequestFilter = jwtRequestFilter;
@@ -34,23 +51,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sessionManagementConfig -> sessionManagementConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(Customizer.withDefaults())
+                .sessionManagement(sessionManagementConfig -> sessionManagementConfig.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authenticationProvider(this.authenticationProvider())
-                .addFilterBefore(jwtRequestFilter , UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests( authConfig -> {
-                    authConfig.requestMatchers(HttpMethod.POST, "auth/login").permitAll();
-                    authConfig.requestMatchers(HttpMethod.POST, "auth/mfa").permitAll();
-                    authConfig.requestMatchers(HttpMethod.POST, "auth/refresh_token").permitAll();
-                    authConfig.requestMatchers(HttpMethod.GET, "auth/public-access").permitAll();
-                    authConfig.requestMatchers("/error").permitAll();
-//                    authConfig.requestMatchers(HttpMethod.GET, "/products").hasAuthority(Permission.READ_ALL_PRODUCTS.name());
-//                    authConfig.requestMatchers(HttpMethod.POST, "/products").hasAuthority(Permission.SAVE_ONE_PRODUCT.name());
-                    authConfig.anyRequest().denyAll();
-                });
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(authConfig -> authConfig
+                        .requestMatchers(ROUTES_ALLOWED_WITHOUT_AUTHENTICATION).permitAll()
+                        .requestMatchers(HttpMethod.GET, ROUTES_GET_ALLOWED_WITHOUT_AUTHENTICATION).permitAll()
+                        .requestMatchers(HttpMethod.POST, ROUTES_POST_ALLOWED_WITHOUT_AUTHENTICATION).permitAll()
+                        .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/auth/")
+                        .defaultSuccessUrl("/auth/", true));
         return httpSecurity.build();
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
